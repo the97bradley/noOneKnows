@@ -13,6 +13,7 @@ import NoOneNose.GUI.FileDrop.*;
 
 public class FileChooserPanel extends JPanel
  {
+	 // Separate file choosers and appropriate filters. 
 	private JFileChooser fileChooser = new JFileChooser();
 	private JFileChooser folderChooser = new JFileChooser();
 	private FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("Java source files (.java)", "java");
@@ -23,48 +24,53 @@ public class FileChooserPanel extends JPanel
 	private ArrayList<File> classFileList = new ArrayList<File>();
 	private ArrayList<File> tempFileList = new ArrayList<File>();
 	
+	private JPanel filePanel = new JPanel();
+	
+	// Active file type we want to use. 
+	private final String FILE_TYPE = "java";
+	
 	public FileChooserPanel()
 	{
-		this.setBackground(new Color(50, 50, 50));
+		this.setBackground(new Color(25, 25, 25));
 		this.setBorder(BorderFactory.createLineBorder(new Color(75, 75, 75), 1));
 		
-		JPanel filePanel = new JPanel();
 		filePanel.setBorder(BorderFactory.createLineBorder(Color.CYAN, 1));
-		//filePanel.setPreferredSize(new Dimension(400, 200));
+		filePanel.setLayout(new GridBagLayout());
 		
-		
-		// ---
-		// Setting up the drag and drop file listener.
-		// ---
+		// Setting up the drag and drop file listener. Accepts single files, multiple files, and folders. 
 		new FileDrop(filePanel, new FileDrop.Listener()
         {   
 			public void filesDropped(File[] files)
             {   
 				for(File f : files)
                 {
-					if (Utils.getFileExtension(f).equals("java"))
+					if (f.isDirectory())
+					{
+						File[] subFiles = getAllFilesFromDirectory(f, FILE_TYPE);
+						for (File subFile : subFiles)
+						{
+							javaFileList.add(subFile);
+							System.out.println("File added: " + subFile.getName());
+						}
+					}
+					else if (Utils.getFileExtension(f).equals(FILE_TYPE))
 					{
 						javaFileList.add(f);
-						System.out.println("Number of files in list: " + javaFileList.size());
-					}
-					else
-					{
-						System.out.println("Only JAVA source files m8!");
+						System.out.println("File added: " + f.getName());
 					}
                 }
+				System.out.println("Number of files in list: " + javaFileList.size());
             }
         });
 		
-		// ---
-		// Setting up the file chooser and button.
-		// ---
+		// Setting up the file chooser and button. Accepts .java files as per the filter. 
 		fileChooser.setFileFilter(fileFilter);
 		fileChooser.setMultiSelectionEnabled(true);
 		fileChooser.setAcceptAllFileFilterUsed(false);
 		
-		JButton button = new JButton("Select File(s)");
-		button.setFocusPainted(false);
-		button.addActionListener(new ActionListener()
+		JButton fileButton = new JButton("Select File(s)");
+		fileButton.setFocusPainted(false);
+		fileButton.addActionListener(new ActionListener()
 		{  
 			public void actionPerformed(ActionEvent e)
 			{  
@@ -72,27 +78,26 @@ public class FileChooserPanel extends JPanel
 				if (returnValue == JFileChooser.APPROVE_OPTION)
 				{
 					File[] files = fileChooser.getSelectedFiles();
-					System.out.println("Chosen file: " + fileChooser.getSelectedFile().getName());
 					for (File f : files)
 					{
 						javaFileList.add(f);
+						System.out.println("File added: " + f.getName());
+						//addFileVisual(f);
 					}
 					System.out.println("Number of files in list: " + javaFileList.size());
 				}
 			}  
 		});  
 		
-		// ---
-		// Setting up the directory chooser and button.
-		// ---
+		// Setting up the directory chooser and button. Accepts folders/directories. 
 		folderChooser.setFileFilter(folderFilter);
 		folderChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		folderChooser.setMultiSelectionEnabled(false);
 		folderChooser.setAcceptAllFileFilterUsed(false);
 		
-		JButton button1 = new JButton("Select Directory");
-		button1.setFocusPainted(false);
-		button1.addActionListener(new ActionListener()
+		JButton folderButton = new JButton("Select Directory");
+		folderButton.setFocusPainted(false);
+		folderButton.addActionListener(new ActionListener()
 		{  
 			public void actionPerformed(ActionEvent e)
 			{  
@@ -100,56 +105,100 @@ public class FileChooserPanel extends JPanel
 				if (returnValue == JFileChooser.APPROVE_OPTION)
 				{
 					File file = folderChooser.getSelectedFile();
-					System.out.println("Selected Folder = " + file.getName() + "\\");
+					System.out.println("Selected Folder: " + file.getName() + "\\");
 					
-					File[] files = getAllFilesFromDirectory(file);
+					File[] files = getAllFilesFromDirectory(file, FILE_TYPE);
 					for (File f : files)
 					{
 						javaFileList.add(f);
+						System.out.println("File added: " + f.getName());
 					}
+				}
+				System.out.println("Number of files in list: " + javaFileList.size());
+			}  
+		});  
+		
+		JButton removeFileButton = new JButton("X");
+		removeFileButton.setFocusPainted(false);
+		removeFileButton.addActionListener(new ActionListener()
+		{  
+			public void actionPerformed(ActionEvent e)
+			{  
+				int returnValue = fileChooser.showOpenDialog(null);
+				if (returnValue == JFileChooser.APPROVE_OPTION)
+				{
+					File[] files = fileChooser.getSelectedFiles();
+					for (File f : files)
+					{
+						removeFile(f.getName());
+					}
+					System.out.println("Number of files in list: " + javaFileList.size());
 				}
 			}  
 		});  
 		
-		// ---
 		// Setup for the layout.
-		// ---
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
-		
+
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(5, 20, 5, 20);
+		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+		gbc.insets = new Insets(20, 20, 20, 20);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridwidth = 3;
-		gbc.weightx = 3;
-		gbc.ipady = 200;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.ipady = 350;
 		this.add(filePanel, gbc);
 		
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.anchor = GridBagConstraints.LINE_START;
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.gridwidth = 1;
-		gbc.weightx = 1;
-		gbc.ipady = 50;
-		this.add(button, gbc);
+		gbc.weightx = 0;
+		gbc.weighty = 0;
+		gbc.ipadx = 50;
+		gbc.ipady = 30;
+		this.add(fileButton, gbc);
 		
 		gbc.gridx = 1;
 		gbc.gridy = 1;
-		this.add(button1, gbc);		
+		this.add(folderButton, gbc);		
+		
+		gbc.gridx = 2;
+		this.add(removeFileButton, gbc);
+	}
+	
+	// Method for removing a file from the list of files.
+	private void removeFile(String name)
+	{
+		// Using a regular for loop to avoid the 'ConcurrentModificationException' when removing elements from an array list. 
+		for (int i = 0; i < javaFileList.size(); i++)
+		{
+			System.out.println("'i': " + i);
+			if (javaFileList.get(i).getName().equals(name))
+			{
+				javaFileList.remove(javaFileList.get(i));
+				System.out.println("File removed: " + javaFileList.get(i).getName());
+			}
+		}
 	}
 	
 	// Recursively get all files from the given directory, including sub-folders. 
-	private File[] getAllFilesFromDirectory(File directory)
+	private File[] getAllFilesFromDirectory(File directory, String type)
 	{		
 		File[] files = directory.listFiles();
+		System.out.println("Root folder: " + directory.getName());
 		for (File f :  files)
 		{
 			if (f.isDirectory())
 			{
-				System.out.println("Directory: " + f.getName());
-				getAllFilesFromDirectory(f);
+				System.out.println("Entered folder: " + f.getName() + "\\");
+				getAllFilesFromDirectory(f, type);
 			}
-			else if (Utils.getFileExtension(f).equals("java"))
+			else if (Utils.getFileExtension(f).equals(type))
 			{
 				System.out.println("	File: " + f.getName());
 				tempFileList.add(f);
@@ -162,4 +211,28 @@ public class FileChooserPanel extends JPanel
 		
 		return toReturn;
 	}
+	
+	private void addFileVisual(File file)
+	{
+		GridBagConstraints gbc = new GridBagConstraints();
+		
+		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.ipadx = 75;
+		gbc.ipady = 75;
+		gbc.weighty = 1;
+		gbc.gridx = javaFileList.size() - 1;
+		
+		FileVisual fileVisual = new FileVisual(file);
+		
+		filePanel.add(fileVisual, gbc);
+		filePanel.revalidate();
+		filePanel.repaint();
+	}
+	
+	// Accessor for the added files.
+	public ArrayList<File> getFileList()
+	{
+		return javaFileList;
+	}
+	
  }

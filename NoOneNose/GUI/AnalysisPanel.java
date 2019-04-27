@@ -20,6 +20,16 @@ public class AnalysisPanel extends JPanel
 		startButton.setPreferredSize(new Dimension(200, 50));
 		startButton.setFont(new Font("SST", Font.PLAIN, 15));
 		settingsButton.setPreferredSize(new Dimension(50, 50));
+		
+		startButton.addActionListener(new ActionListener()
+		{  
+			public void actionPerformed(ActionEvent e)
+			{  
+				// ---
+				// CODE GOES HERE DUDE
+				// ---
+			}  
+		}); 
 
 		this.add(settingsButton);
 		this.add(startButton);

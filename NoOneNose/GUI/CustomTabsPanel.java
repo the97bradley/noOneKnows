@@ -10,113 +10,110 @@ import java.util.ArrayList;
 public class CustomTabsPanel extends JPanel
  {
 	private JPanel tabListPanel = new JPanel();
-	private JLayeredPane defaultContentPanel = new JLayeredPane();
-	private GridBagConstraints listConstraints = new GridBagConstraints();
-	private ArrayList<JComponent> tabs = new ArrayList<JComponent>();
-	private ArrayList<JComponent> contentTabs = new ArrayList<JComponent>();
+	private JPanel contentPanel = new JPanel();
+	private GridBagConstraints gbc = new GridBagConstraints();
+	private ArrayList<Tab> tabs = new ArrayList<Tab>();
 	
 	private int numberOfTabs = 0;
 	private int currentTab = 0;
-	
-	private final Color defaultTabColour = new Color(50, 50, 50);
-	private final Color defaultTabBorder = new Color(100, 100, 100);
-	private final Color unselectedTabColour = new Color(50, 50, 50);
-	private final Color tabClickColour = new Color(50, 50, 50);
-	
-	public CustomTabsPanel()
+	boolean alignedLeft =false;
+		
+	public CustomTabsPanel(boolean left)
 	{
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.RED);
-		
-		listConstraints.fill = GridBagConstraints.HORIZONTAL;
-		listConstraints.gridx = 0;
-		listConstraints.ipadx = 200;
-		listConstraints.ipady = 50;
-		listConstraints.anchor = GridBagConstraints.PAGE_START;
+		this.setOpaque(false);
 		
 		tabListPanel.setBackground(Color.GREEN);
+		tabListPanel.setOpaque(false);
 		tabListPanel.setLayout(new GridBagLayout());
-		defaultContentPanel.setBackground(Color.BLUE);
-		defaultContentPanel.setLayout(new BorderLayout());
+		contentPanel.setBackground(Color.BLUE);
+		contentPanel.setLayout(new BorderLayout());
 		
-		this.add(tabListPanel, BorderLayout.WEST);
-		this.add(defaultContentPanel, BorderLayout.CENTER);
+		// Added boolean parameter to the constructor so you can decide whether you want the list of tabs
+		// to be on the left (like I previously had them by default) or at the top. Added mainly to incorporate the
+		// need for any extra tabs within tabs. 
+		if (left)
+		{
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.gridx = 0;
+			gbc.ipadx = 200;
+			gbc.ipady = 50;
+			gbc.anchor = GridBagConstraints.PAGE_START;
+			
+			alignedLeft = true;
+			this.add(tabListPanel, BorderLayout.WEST);
+		}
+		else
+		{
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.gridy = 0;
+			gbc.ipadx = 75;
+			gbc.ipady = 25;
+			gbc.anchor = GridBagConstraints.PAGE_START;
+			
+			this.add(tabListPanel, BorderLayout.NORTH);
+		}
+		
+		this.add(contentPanel, BorderLayout.CENTER);
 	}
 	
 	public void addTab(String tabText, JComponent tabContentPanel)
 	{
-		JLabel tabName = new JLabel(tabText);
-		JPanel tab = new JPanel();
+		Tab tab = new Tab(tabText, tabContentPanel);
+		
 		int tabIndex = numberOfTabs;
-		
 		numberOfTabs++;
-		currentTab = tabIndex;
 		
-		contentTabs.add(tabContentPanel);
-		defaultContentPanel.add(tabContentPanel, BorderLayout.CENTER);
+		// Setting default active tab, in this case the initial one. 
+		if (tabIndex == 0)
+		{
+			tab.setSelected(true);
+			contentPanel.add(tabContentPanel, BorderLayout.CENTER);
+		}
 		
-		//tabName.setFont(new Font("SST", Font.PLAIN, 25));
-		tabName.setForeground(Color.GRAY);
-		
-		tab.setLayout(new GridBagLayout());
-		tab.setBackground(Color.BLACK);
-		tab.add(tabName);
-		
-		tab.addMouseListener(new MouseAdapter()
+		tab.getTab().addMouseListener(new MouseAdapter()
 		{
 			public void mouseClicked(MouseEvent e) 
 			{
 				if (currentTab != tabIndex)
-				{		
-					// Reset the colours on the previously selected tab. 
-					tabs.get(currentTab).setBackground(Color.BLACK);
-					tabs.get(currentTab).setForeground(Color.GRAY);
-					tabs.get(currentTab).setBorder(null);
-					tabs.get(currentTab).getComponent(0).setForeground(Color.GRAY);
-			
+				{
+					// Update current selected tab. 
+					tabs.get(currentTab).setSelected(false);
 					currentTab = tabIndex;
-					
-					tab.setBackground(new Color(50, 50, 50));
-					//tab.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-					tab.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 0, new Color(100, 100, 100)));
-					tabName.setForeground(Color.WHITE);
+					tab.setSelected(true);
 					
 					// Update the current displayed tab. 
-					defaultContentPanel.removeAll();
-					defaultContentPanel.add(contentTabs.get(tabIndex), BorderLayout.CENTER);
-					defaultContentPanel.repaint();
-					defaultContentPanel.revalidate();
+					contentPanel.removeAll();
+					contentPanel.add(tab.getTabContent(), BorderLayout.CENTER);
+					contentPanel.revalidate();	
+					contentPanel.repaint();
 				}
 				else
 				{
 					System.out.println("Tab already selected!");
 				}
 			}
-			public void mouseEntered(MouseEvent e)
-			{
-				//System.out.println("Mouse Entered Tab: " + tabName.getText());
-			}
-			public void mouseExited(MouseEvent e)
-			{
-				
-			}
-			public void mousePressed(MouseEvent e)
-			{
-				
-			}
-			public void mouseReleased(MouseEvent e)
-			{
-				
-			}
 		});
 		
-		listConstraints.gridy = tabIndex;
+		// Adding the tabs according to the right alignment.
+		if (alignedLeft)
+		{
+			gbc.gridy = tabIndex;
+			tabListPanel.add(tab.getTab(), gbc);
+		}
+		else
+		{
+			gbc.gridx = tabIndex;
+			tabListPanel.add(tab.getTab(), gbc);
+		}
 		
 		tabs.add(tab);
-		tabListPanel.add(tab, listConstraints);
 		this.revalidate();
+		this.repaint();
 	}
 	
+	/*
 	public void removeTab(int index)
 	{
 		tabListPanel.remove(tabs.get(index));
@@ -129,4 +126,5 @@ public class CustomTabsPanel extends JPanel
 		defaultContentPanel.revalidate();
 		defaultContentPanel.repaint();
 	}
+	*/
 }
