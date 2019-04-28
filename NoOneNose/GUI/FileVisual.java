@@ -14,7 +14,7 @@ public class FileVisual extends JPanel
 		this.setLayout(new BorderLayout());
 		this.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
 	
-		fileIcon.setIcon(UIManager.getIcon("OptionPane.informationIcon"));
+		fileIcon.setIcon(Utils.resizeIcon(new ImageIcon("NoOneNose\\GUI\\Images\\File_Icon.png"), 40, 50));
 		fileIcon.setHorizontalAlignment(JLabel.CENTER);
 		fileName.setText(f.getName());
 		fileName.setHorizontalAlignment(JLabel.CENTER);

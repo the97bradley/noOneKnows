@@ -12,14 +12,16 @@ public class Tab
 	private JLabel tabName = new JLabel();
 	private JComponent tabContent;
 	boolean isSelected = false;
+	private int tabIndex = 0;
 	
 	// Colours.
 	private Color tabColour = new Color(0, 0, 0);
 	private Color selectedColour = new Color(200, 200, 200);
 	private Color borderColour = new Color(255, 0, 0);
 	
-	public Tab(String name, JComponent content)
+	public Tab(int index, String name, JComponent content)
 	{
+		tabIndex = index;
 		tabName.setText(name);
 		tabName.setForeground(Color.GRAY);
 		
@@ -48,11 +50,7 @@ public class Tab
 			}
 			public void mouseEntered(MouseEvent e)
 			{
-				if (isSelected)
-				{
-					
-				}
-				else
+				if (!isSelected)
 				{
 					tab.setBorder(null);
 					tab.setBackground(new Color(tabColour.getRed() + 50, tabColour.getGreen() + 50, tabColour.getBlue() + 50));
@@ -62,11 +60,7 @@ public class Tab
 			}
 			public void mouseExited(MouseEvent e)
 			{
-				if (isSelected)
-				{
-					
-				}
-				else
+				if (!isSelected)
 				{
 					tab.setBorder(null);
 					tab.setBackground(tabColour);
@@ -102,11 +96,18 @@ public class Tab
 		else
 		{
 			tabName.setForeground(Color.GRAY);
-			tab.setBorder(null);
 			tab.setBackground(tabColour);
+			tab.setBorder(null);
 			tab.revalidate();
 			tab.repaint();
 		}
+	}
+	
+	public void setIcon(ImageIcon icon)
+	{
+		tabName.setIcon(icon);
+		tabName.revalidate();
+		tabName.repaint();
 	}
 	
 	public JPanel getTab()
@@ -117,5 +118,10 @@ public class Tab
 	public JComponent getTabContent()
 	{
 		return tabContent;
+	}
+	
+	public int getIndex()
+	{
+		return tabIndex;
 	}
 }

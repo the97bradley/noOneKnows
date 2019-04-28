@@ -24,6 +24,8 @@ public class MainGUI
 			System.out.println("Cannot find Look And Feel class name.");
 		}
 		
+		Utils.getFont();
+		
 		// Getting the right size of the display to determine the size of the panel. 
 		GraphicsDevice GD = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		int displayWidth = GD.getDisplayMode().getWidth();
@@ -42,9 +44,12 @@ public class MainGUI
 		// Components of UI so far. 
 		CustomTabsPanel myTabPane = new CustomTabsPanel(true);
 		CustomTabsPanel mainPanel = new CustomTabsPanel(false);
-		AnalysisPanel analysis = new AnalysisPanel();
-		JPanel messagePanel = MessageDisplayPanel.messageDisplayPanelBuild();
+		AnalysisPanel analysisPanel = new AnalysisPanel();
+		ReportPanel reportPanel = new ReportPanel();
 		FileChooserPanel fileChooserPanel = new FileChooserPanel();
+		SettingsPanel settingsPanel =  new SettingsPanel();
+		
+		JPanel messagePanel = MessageDisplayPanel.messageDisplayPanelBuild();
 		
 		// -------------------
 		// Testing random yokes
@@ -54,20 +59,27 @@ public class MainGUI
 		tempPanel02.setBackground(Color.CYAN);
 		
 		//BackgroundPanel background = new BackgroundPanel(new ImageIcon("NoOneNose\\GUI\\Images\\background.jpg").getImage(), BackgroundPanel.SCALED);
-		
 		//testTabPane.addTab("test", tempPanel02);
 		//testTabPane.addTab("test part II", background);
 		
 		MessageDisplayPanel.displayMessage("Settings will be here!");
 		// ------------------
 		
-		mainPanel.addTab("Analysis", analysis);
-		mainPanel.addTab("Report", new JLabel("REPORT STUFF GOES HERE..."));
+		mainPanel.addTab("Analysis", analysisPanel);
+		mainPanel.addTab("Report", reportPanel);
 		
 		// Adding each component as a tab to the tabbed pane. 
 		myTabPane.addTab("Analysis", mainPanel);
 		myTabPane.addTab("Pick Files", fileChooserPanel);
-		myTabPane.addTab("Settings", messagePanel);
+		myTabPane.addTab("Settings", settingsPanel);
+		
+		ImageIcon analysisIcon = Utils.resizeIcon(new ImageIcon("NoOneNose\\GUI\\Images\\Analysis_Icon.png"), 40, 40);
+		ImageIcon filesIcon = Utils.resizeIcon(new ImageIcon("NoOneNose\\GUI\\Images\\Folder_Icon.png"), 50, 40);
+		ImageIcon settingsIcon = Utils.resizeIcon(new ImageIcon("NoOneNose\\GUI\\Images\\Settings_Icon.png"), 40, 40);
+		
+		myTabPane.setTabIcon(0, analysisIcon);
+		myTabPane.setTabIcon(1, filesIcon);
+		myTabPane.setTabIcon(2, settingsIcon);
 		
 		myPanel.add(myTabPane, BorderLayout.CENTER);
 		myFrame.add(myPanel);

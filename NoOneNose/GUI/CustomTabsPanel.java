@@ -16,18 +16,19 @@ public class CustomTabsPanel extends JPanel
 	
 	private int numberOfTabs = 0;
 	private int currentTab = 0;
-	boolean alignedLeft =false;
+	boolean alignedLeft = false;
 		
 	public CustomTabsPanel(boolean left)
 	{
 		this.setLayout(new BorderLayout());
-		this.setBackground(Color.RED);
+		//this.setBackground(Color.RED);		// Colours set for initial debugging and figuring out. 
 		this.setOpaque(false);
 		
-		tabListPanel.setBackground(Color.GREEN);
+		//tabListPanel.setBackground(Color.GREEN);
 		tabListPanel.setOpaque(false);
 		tabListPanel.setLayout(new GridBagLayout());
-		contentPanel.setBackground(Color.BLUE);
+		//contentPanel.setBackground(Color.BLUE);
+		contentPanel.setOpaque(false);
 		contentPanel.setLayout(new BorderLayout());
 		
 		// Added boolean parameter to the constructor so you can decide whether you want the list of tabs
@@ -60,13 +61,12 @@ public class CustomTabsPanel extends JPanel
 	
 	public void addTab(String tabText, JComponent tabContentPanel)
 	{
-		Tab tab = new Tab(tabText, tabContentPanel);
+		Tab tab = new Tab(numberOfTabs, tabText, tabContentPanel);
 		
-		int tabIndex = numberOfTabs;
 		numberOfTabs++;
 		
 		// Setting default active tab, in this case the initial one. 
-		if (tabIndex == 0)
+		if (tab.getIndex() == 0)
 		{
 			tab.setSelected(true);
 			contentPanel.add(tabContentPanel, BorderLayout.CENTER);
@@ -76,11 +76,11 @@ public class CustomTabsPanel extends JPanel
 		{
 			public void mouseClicked(MouseEvent e) 
 			{
-				if (currentTab != tabIndex)
+				if (currentTab != tab.getIndex())
 				{
 					// Update current selected tab. 
 					tabs.get(currentTab).setSelected(false);
-					currentTab = tabIndex;
+					currentTab = tab.getIndex();
 					tab.setSelected(true);
 					
 					// Update the current displayed tab. 
@@ -99,18 +99,24 @@ public class CustomTabsPanel extends JPanel
 		// Adding the tabs according to the right alignment.
 		if (alignedLeft)
 		{
-			gbc.gridy = tabIndex;
+			gbc.gridy = tab.getIndex();
 			tabListPanel.add(tab.getTab(), gbc);
 		}
 		else
 		{
-			gbc.gridx = tabIndex;
+			gbc.gridx = tab.getIndex();
 			tabListPanel.add(tab.getTab(), gbc);
+			tabListPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(75, 75, 75)));
 		}
 		
 		tabs.add(tab);
 		this.revalidate();
 		this.repaint();
+	}
+	
+	public void setTabIcon(int index, ImageIcon icon)
+	{
+		tabs.get(index).setIcon(icon);
 	}
 	
 	/*
