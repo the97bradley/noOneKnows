@@ -193,46 +193,55 @@ public class FileChooserPanel extends JPanel
 			}
 		});  
 		
+		// Setting up the layout for the buttons specifically. 
 		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BorderLayout());
+		buttonPanel.setOpaque(false);
+		buttonPanel.setPreferredSize(new Dimension(700, 60));
 		
+		JPanel buttonSubPanel01 = new JPanel();
+		JPanel buttonSubPanel02 = new JPanel();
+		
+		buttonSubPanel01.setLayout(new GridLayout(0, 2));
+		buttonSubPanel01.setBackground(Color.RED);
+		buttonSubPanel02.setLayout(new GridLayout(0, 2));
+		buttonSubPanel02.setBackground(Color.GREEN);
+		
+		fileButton.setPreferredSize(new Dimension(100, 60));
+		folderButton.setPreferredSize(new Dimension(100, 60));
+		removeFileButton.setPreferredSize(new Dimension(60, 60));
+		excludeButton.setPreferredSize(new Dimension(60, 60));
+		
+		buttonSubPanel01.add(fileButton);
+		buttonSubPanel01.add(folderButton);
+		buttonSubPanel02.add(removeFileButton);
+		buttonSubPanel02.add(excludeButton);
+		
+		buttonPanel.add(buttonSubPanel01, BorderLayout.WEST);
+		buttonPanel.add(buttonSubPanel02, BorderLayout.EAST);
 		
 		// Setup for the layout.
 		GridBagConstraints gbc = new GridBagConstraints();
 
-		gbc.fill = GridBagConstraints.NONE;
-		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.insets = new Insets(20, 20, 20, 20);
-		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.gridwidth = 4;
 		gbc.weightx = 1;
-		gbc.weighty = 1;
-		gbc.ipadx = 600;
-		gbc.ipady = 300;
+		gbc.weighty = 0;
+		gbc.ipadx = 400;
+		gbc.ipady = 250;
 		mainPanel.add(filePanel, gbc);
 		
-		gbc.fill = GridBagConstraints.NONE;
-		gbc.anchor = GridBagConstraints.LINE_START;
-		gbc.gridx = 0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		//gbc.anchor = GridBagConstraints.LINE_START;
 		gbc.gridy = 1;
-		gbc.gridwidth = 1;
-		gbc.weightx = 0;
-		gbc.weighty = 1;
-		gbc.ipadx = 50;
-		gbc.ipady = 30;
-		mainPanel.add(fileButton, gbc);
-		
-		gbc.gridx = 1;
-		mainPanel.add(folderButton, gbc);		
-		
-		gbc.gridx = 2;
-		mainPanel.add(removeFileButton, gbc);
-		
-		gbc.gridx = 3;
-		mainPanel.add(excludeButton, gbc);
+		gbc.ipady = 25;
+		//gbc.weightx = 1;
+		mainPanel.add(buttonPanel, gbc);
 		
 		gbc.gridy = 2;
-		gbc.weighty = 2;
+		gbc.weighty = 1;
 		gbc.anchor = GridBagConstraints.SOUTH;
 		
 		JPanel filler = new JPanel();
