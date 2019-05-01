@@ -81,6 +81,8 @@ public class MainGUI
 		myTabPane.setTabIcon(1, filesIcon);
 		myTabPane.setTabIcon(2, settingsIcon);
 		
+		reportPanel.appendReportText("EVEN MORE SAMPLE TEXT");
+		
 		myPanel.add(myTabPane, BorderLayout.CENTER);
 		myFrame.add(myPanel);
 		myFrame.validate();

@@ -237,6 +237,7 @@ public class FileChooserPanel extends JPanel
 		//gbc.anchor = GridBagConstraints.LINE_START;
 		gbc.gridy = 1;
 		gbc.ipady = 25;
+		gbc.ipadx = 60;
 		//gbc.weightx = 1;
 		mainPanel.add(buttonPanel, gbc);
 		

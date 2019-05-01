@@ -10,8 +10,11 @@ public class ReportPanel extends JPanel
 	private GridBagConstraints mainGBC = new GridBagConstraints();
 	private ArrayList<Boolean> enabledSmells = new ArrayList<Boolean>();
 	
-	private Color smellPanelColour = new Color(40, 45, 60);
-	private Color smellPanelBorder = new Color(80, 90, 100);
+	private JPanel reportDisplay = new JPanel();
+	private JTextArea reportTextArea = new JTextArea();
+	
+	private Color reportColour = new Color(40, 45, 60);
+	private Color reportBorder = new Color(80, 90, 100);
 	
 	public ReportPanel()
 	{
@@ -44,10 +47,44 @@ public class ReportPanel extends JPanel
         titleSubText.setWrapStyleWord(true);
         titleSubText.setEditable(false);
 		mainTitle.add(titleSubText, BorderLayout.CENTER);
+		
+		reportDisplay.setLayout(new BorderLayout());
+		//reportDisplay.setBackground(reportColour);
+		reportDisplay.setBorder(BorderFactory.createLineBorder(reportBorder, 1));
+		
+		setupReportTextArea();
 
+		mainGBC.fill = GridBagConstraints.VERTICAL;
+		mainGBC.anchor = GridBagConstraints.LINE_START;
+		mainGBC.weightx = 1;
+		mainGBC.weighty = 1;
+		mainGBC.ipadx = 500;
+		mainGBC.insets = new Insets(40, 40, 40, 40);
+		mainPanel.add(reportDisplay, mainGBC);
 		
 		this.add(mainTitle, BorderLayout.NORTH);
 		this.add(mainPanel, BorderLayout.CENTER);
+	}
+	
+	private void setupReportTextArea()
+	{
+		reportTextArea.setBackground(reportColour);
+		reportTextArea.setForeground(Color.WHITE);
+		reportTextArea.setLineWrap(true);
+        reportTextArea.setWrapStyleWord(true);
+        reportTextArea.setEditable(false);
+		
+		JScrollPane reportTextAreaScroll = new JScrollPane(reportTextArea);
+		reportTextAreaScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);  
+		reportTextAreaScroll.setBorder(null);
+		
+		
+		reportDisplay.add(reportTextAreaScroll, BorderLayout.CENTER);
+	}
+	
+	public void appendReportText(String text)
+	{
+		reportTextArea.append(text);
 	}
 	
 }
