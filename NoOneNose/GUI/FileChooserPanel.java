@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class FileChooserPanel extends JPanel
 	private ArrayList<File> javaFileList = new ArrayList<File>();
 	private ArrayList<File> tempFileList = new ArrayList<File>();
 	private ArrayList<String> excludedFolders = new ArrayList<String>();
+	
+	private String projectDirectoryName = "";
 	
 	private JPanel filePanel = new JPanel();
 	
@@ -49,7 +52,8 @@ public class FileChooserPanel extends JPanel
 		
 		JLabel mainTitleText = new JLabel("PICK YOUR FILES");
 		mainTitleText.setForeground(Color.WHITE);
-		mainTitleText.setFont(new Font("Brandon Text Light", Font.PLAIN, 32));
+		//mainTitleText.setFont(new Font("Brandon Text Light", Font.PLAIN, 32));
+		mainTitleText.setFont(Utils.FONT.deriveFont(32f));
 		mainTitleText.setBorder(BorderFactory.createEmptyBorder(15, 15, 0, 0));
 		mainTitle.add(mainTitleText, BorderLayout.NORTH);
 		
@@ -57,7 +61,8 @@ public class FileChooserPanel extends JPanel
 		titleSubText.setOpaque(false);
 		titleSubText.setForeground(Color.GRAY);
 		titleSubText.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
-		titleSubText.setFont(new Font("Brandon Text Light", Font.PLAIN, 16));
+		//titleSubText.setFont(new Font("Brandon Text Light", Font.PLAIN, 16));
+		titleSubText.setFont(Utils.FONT.deriveFont(16f));
 		titleSubText.setText("Manage your source for the analysis. Here you can select your project's directory, add files individually, remove any files, as well as exclude a given directory from the analysis.");
 		titleSubText.setLineWrap(true);
         titleSubText.setWrapStyleWord(true);
@@ -77,6 +82,15 @@ public class FileChooserPanel extends JPanel
                 {
 					if (f.isDirectory())
 					{
+						try
+						{
+							projectDirectoryName = f.getCanonicalPath();
+						}
+						catch (IOException exception)
+						{
+							exception.printStackTrace();
+						}
+						
 						File[] subFiles = getAllFilesFromDirectory(f, FILE_TYPE);
 						for (File subFile : subFiles)
 						{
@@ -115,6 +129,7 @@ public class FileChooserPanel extends JPanel
 						{
 							javaFileList.add(f);
 							System.out.println("File added: " + f.getName());
+							
 							//addFileVisual(f);
 						}
 					}
@@ -143,6 +158,15 @@ public class FileChooserPanel extends JPanel
 					
 					if (!checkForExclusion(file))
 					{
+						try
+						{
+							projectDirectoryName = file.getCanonicalPath();
+						}
+						catch (IOException exception)
+						{
+							exception.printStackTrace();
+						}
+						
 						File[] files = getAllFilesFromDirectory(file, FILE_TYPE);
 						for (File f : files)
 						{
@@ -159,7 +183,10 @@ public class FileChooserPanel extends JPanel
 		});  
 		
 		JButton removeFileButton = new JButton(Utils.resizeIcon(new ImageIcon("NoOneNose\\GUI\\Images\\File_Remove_Icon.png"), 30, 40));
-		removeFileButton.setFocusPainted(false);
+		removeFileButton.setContentAreaFilled(false);
+		removeFileButton.setOpaque(false);
+		removeFileButton.setToolTipText("Remove a file.");
+		//removeFileButton.setFocusPainted(false);
 		removeFileButton.addActionListener(new ActionListener()
 		{  
 			public void actionPerformed(ActionEvent e)
@@ -177,7 +204,10 @@ public class FileChooserPanel extends JPanel
 			}  
 		});  
 		
-		JButton excludeButton = new JButton("Exclude a Directory");
+		JButton excludeButton = new JButton(Utils.resizeIcon(new ImageIcon("NoOneNose\\GUI\\Images\\Folder_Exclude_Icon.png"), 50, 40));
+		excludeButton.setContentAreaFilled(false);
+		excludeButton.setOpaque(false);
+		excludeButton.setToolTipText("Exclude a folder from selection.");
 		excludeButton.addActionListener(new ActionListener()
 		{  
 			public void actionPerformed(ActionEvent e)
@@ -205,7 +235,7 @@ public class FileChooserPanel extends JPanel
 		buttonSubPanel01.setLayout(new GridLayout(0, 2));
 		buttonSubPanel01.setBackground(Color.RED);
 		buttonSubPanel02.setLayout(new GridLayout(0, 2));
-		buttonSubPanel02.setBackground(Color.GREEN);
+		buttonSubPanel02.setOpaque(false);
 		
 		fileButton.setPreferredSize(new Dimension(100, 60));
 		folderButton.setPreferredSize(new Dimension(100, 60));
@@ -257,6 +287,33 @@ public class FileChooserPanel extends JPanel
 	public ArrayList<File> getFileList()
 	{
 		return javaFileList;
+	}
+	
+	public String getProjectDirectoryName()
+	{
+		return projectDirectoryName;
+	}
+	
+	public String[] getFileLocations()
+	{
+		ArrayList<String> tempStringList = new ArrayList<String>();
+		
+		try
+		{
+			for (File f : javaFileList)
+			{
+				tempStringList.add(f.getCanonicalPath());
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
+		String[] toReturn = new String[tempStringList.size()];
+		toReturn = tempStringList.toArray(toReturn);
+		
+		return toReturn;
 	}
 	
 	// Method for removing a file from the list of files.
