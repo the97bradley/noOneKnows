@@ -11,6 +11,8 @@ import java.awt.event.MouseListener;
 
 public class AnalysisPanel extends JPanel
 {
+	private JButton startButton = new JButton("GO!");
+	
 	public AnalysisPanel()
 	{
 		this.setLayout(new BorderLayout());
@@ -36,19 +38,23 @@ public class AnalysisPanel extends JPanel
 		titleSubText.setForeground(Color.GRAY);
 		titleSubText.setBorder(BorderFactory.createEmptyBorder(0, 15, 15, 15));
 		titleSubText.setFont(Utils.FONT.deriveFont(16f));
-		titleSubText.setText("Sample text.");
+		titleSubText.setText("Begin the analysis of your project from here. Press GO to begin.");
 		titleSubText.setLineWrap(true);
         titleSubText.setWrapStyleWord(true);
         titleSubText.setEditable(false);
 		mainTitle.add(titleSubText, BorderLayout.CENTER);
 		
-		JButton startButton = new JButton("GO!");
-		JButton settingsButton = new JButton(Utils.resizeIcon(new ImageIcon("NoOneNose\\GUI\\Images\\Icon_Settings.png"), 30, 30));
-		
 		startButton.setPreferredSize(new Dimension(200, 50));
-		startButton.setFont(new Font("Brandon Text Light", Font.PLAIN, 15));
-		settingsButton.setPreferredSize(new Dimension(50, 50));
+		startButton.setFont(Utils.FONT);
 		
+		mainPanel.add(startButton);
+		
+		this.add(mainTitle, BorderLayout.NORTH);
+		this.add(mainPanel, BorderLayout.CENTER);
+	}
+	
+	public void setupActionListener(FileChooserPanel fcp)
+	{
 		startButton.addActionListener(new ActionListener()
 		{  
 			public void actionPerformed(ActionEvent e)
@@ -56,15 +62,10 @@ public class AnalysisPanel extends JPanel
 				// ---
 				// CODE GOES HERE DUDE
 				// ---
+				
 				System.out.println("Let's go dude!");
 			}  
 		}); 
-
-		mainPanel.add(settingsButton);
-		mainPanel.add(startButton);
-		
-		this.add(mainTitle, BorderLayout.NORTH);
-		this.add(mainPanel, BorderLayout.CENTER);
 	}
 	
 }
